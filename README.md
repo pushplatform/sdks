@@ -50,6 +50,52 @@ pod install
 
 Откройте `.xcworkspace`. Используйте один способ подключения SDK в target. CocoaPods Trunk до 6 ноября 2026, 12:00 ET, принимает **1.2.6**. Версия **1.2.7** уже ставится через Swift Package Manager. Требуется **iOS 13+**; настройка APNs, capabilities и callbacks описана в [README iOS SDK](https://github.com/pushplatform/pushpilot-sdk-ios#readme).
 
+Чтобы `received` ушёл при закрытом приложении, добавьте Notification Service Extension. Баннер без него показывается. Файл для копирования: [Sources/PushPlatformNotificationService/NotificationService.swift](https://github.com/pushplatform/pushpilot-sdk-ios/blob/v1.2.7/Sources/PushPlatformNotificationService/NotificationService.swift).
+
+1. **File → New → Target → Notification Service Extension**. **Don't Activate**. Deployment Target как у приложения, не ниже iOS 13.
+2. Bundle ID extension — bundle ID приложения плюс `.PushPlatformNotificationService`.
+3. **App Groups** на обоих target: `group.<bundle id приложения>.pushplatform`.
+4. Замените `NotificationService.swift` файлом по ссылке выше. React Native, Expo и Flutter этот target не создают.
+
+```swift
+import UserNotifications
+
+class NotificationService: UNNotificationServiceExtension {
+    override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
+        guard let content = request.content.mutableCopy() as? UNMutableNotificationContent else {
+            contentHandler(request.content)
+            return
+        }
+        let userInfo = request.content.userInfo
+        let notificationID = userInfo["notification_id"] as? String
+        let bundleID = (Bundle.main.bundleIdentifier ?? "").replacingOccurrences(of: ".PushPlatformNotificationService", with: "")
+        let defaults = UserDefaults(suiteName: "group.\(bundleID).pushplatform")
+        let serverURL = defaults?.string(forKey: "server_url")
+        let applicationID = defaults?.string(forKey: "application_id")
+        let subscriptionID = defaults?.string(forKey: "subscription_id")
+        guard let notificationID, !notificationID.isEmpty,
+              let serverURL, let applicationID, let subscriptionID, !subscriptionID.isEmpty,
+              let encoded = notificationID.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
+              let url = URL(string: "\(serverURL)/notifications/\(encoded)") else {
+            contentHandler(content)
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try? JSONSerialization.data(withJSONObject: [
+            "app_id": applicationID,
+            "subscription_id": subscriptionID,
+            "received": true,
+        ])
+        let task = URLSession.shared.dataTask(with: request) { _, _, _ in
+            contentHandler(content)
+        }
+        task.resume()
+    }
+}
+```
+
 ### Android — публичный Maven-репозиторий GitHub
 
 В `settings.gradle.kts` добавьте репозиторий SDK в `dependencyResolutionManagement.repositories`, сохранив `google()` и `mavenCentral()`:
