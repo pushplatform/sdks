@@ -150,13 +150,13 @@ cp node_modules/@pushplatform/web-sdk/dist/service-worker.js public/pushpilot-sw
 
 | Платформа | Версия и установка | Репозиторий |
 | :--- | :--- | :--- |
-| **React Native / Expo · JavaScript / TypeScript** | **1.3.5** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
-| **Flutter · Dart** | **1.2.7** · [pub.dev](https://pub.dev/packages/push_platform_flutter) | [pushpilot-sdk-flutter](https://github.com/pushplatform/pushpilot-sdk-flutter) |
+| **React Native / Expo · JavaScript / TypeScript** | **1.3.6** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
+| **Flutter · Dart** | **1.2.8** · [pub.dev](https://pub.dev/packages/push_platform_flutter) | [pushpilot-sdk-flutter](https://github.com/pushplatform/pushpilot-sdk-flutter) |
 
 ### React Native и Expo
 
 ```sh
-npm install @pushplatform/react-native@1.3.5
+npm install @pushplatform/react-native@1.3.6
 ```
 
 Для **Expo** дополнительно установите development client:
@@ -172,7 +172,7 @@ npx expo install expo-dev-client
 ### Flutter
 
 ```sh
-flutter pub add push_platform_flutter:^1.2.7
+flutter pub add push_platform_flutter:^1.2.8
 ```
 
 Пакет опубликован на [pub.dev](https://pub.dev/packages/push_platform_flutter) и подключает Android SDK **1.2.5** и CocoaPod `PushPlatformSDK` **1.2.6**. Требуются **Flutter 3.24+ / Dart 3.5+**, **Android API 21+** или **iOS 13+**. Настройка Firebase, APNs и CocoaPods — в [README Flutter SDK](https://github.com/pushplatform/pushpilot-sdk-flutter#readme). Flutter Web и desktop не поддерживаются.
