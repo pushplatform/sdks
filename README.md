@@ -13,7 +13,7 @@
 
 Официальный каталог SDK **PushPilot** для мобильных приложений и сайтов. Все SDK опубликованы: выберите платформу вашего проекта, установите пакет и завершите настройку по инструкции.
 
-Для нативного приложения выберите **iOS** или **Android**, для проекта на **React Native / Expo** или **Flutter** — соответствующий SDK, для сайта — **Web SDK**. Ниже указаны опубликованные версии, сверенные 12 октября 2026 года.
+Для нативного приложения выберите **iOS** или **Android**, для проекта на **React Native / Expo** или **Flutter** — соответствующий SDK, для сайта — **Web SDK**. Ниже указаны опубликованные версии, сверенные 3 ноября 2026 года.
 
 ## 📱 Мобильные SDK
 
@@ -21,12 +21,12 @@ SDK для нативных приложений iOS и Android.
 
 | Платформа | Версия и установка | Репозиторий |
 | :--- | :--- | :--- |
-| **iOS · Swift** | **1.0.0** · SPM или [CocoaPods](https://cocoapods.org/pods/PushPlatformSDK) | [pushpilot-sdk-ios](https://github.com/pushplatform/pushpilot-sdk-ios) |
-| **Android · Kotlin** | **1.0.0** · [публичный Maven-репозиторий GitHub](https://github.com/pushplatform/pushpilot-sdk-android/tree/maven) | [pushpilot-sdk-android](https://github.com/pushplatform/pushpilot-sdk-android) |
+| **iOS · Swift** | **1.2.7** через SPM, **1.2.6** через [CocoaPods](https://cocoapods.org/pods/PushPlatformSDK) | [pushpilot-sdk-ios](https://github.com/pushplatform/pushpilot-sdk-ios) |
+| **Android · Kotlin** | **1.2.5** · [публичный Maven-репозиторий GitHub](https://github.com/pushplatform/pushpilot-sdk-android/tree/maven) | [pushpilot-sdk-android](https://github.com/pushplatform/pushpilot-sdk-android) |
 
 ### iOS — Swift Package Manager или CocoaPods
 
-**SPM:** в Xcode откройте **File → Add Package Dependencies**, укажите URL и выберите версию **1.0.0**. Добавьте продукт **PushPlatformSDK** в target приложения.
+**SPM:** в Xcode откройте **File → Add Package Dependencies**, укажите URL и выберите версию **1.2.7**. Добавьте продукт **PushPlatformSDK** в target приложения. Пакет также есть в [Swift Package Index](https://swiftpackageindex.com/pushplatform/pushpilot-sdk-ios).
 
 ```text
 https://github.com/pushplatform/pushpilot-sdk-ios.git
@@ -35,20 +35,20 @@ https://github.com/pushplatform/pushpilot-sdk-ios.git
 Для проекта с `Package.swift` добавьте в `dependencies`:
 
 ```swift
-.package(url: "https://github.com/pushplatform/pushpilot-sdk-ios.git", from: "1.0.0")
+.package(url: "https://github.com/pushplatform/pushpilot-sdk-ios.git", from: "1.2.7")
 ```
 
 **CocoaPods:** добавьте в target приложения в `Podfile`:
 
 ```ruby
-pod 'PushPlatformSDK', '1.0.0'
+pod 'PushPlatformSDK', '1.2.6'
 ```
 
 ```sh
 pod install
 ```
 
-Откройте `.xcworkspace`. Используйте один способ подключения SDK в target. Требуется **iOS 13+**; настройка APNs, capabilities и callbacks описана в [README iOS SDK](https://github.com/pushplatform/pushpilot-sdk-ios#readme).
+Откройте `.xcworkspace`. Используйте один способ подключения SDK в target. CocoaPods Trunk до 6 ноября 2026, 12:00 ET, принимает **1.2.6**. Версия **1.2.7** уже ставится через Swift Package Manager. Требуется **iOS 13+**; настройка APNs, capabilities и callbacks описана в [README iOS SDK](https://github.com/pushplatform/pushpilot-sdk-ios#readme).
 
 ### Android — публичный Maven-репозиторий GitHub
 
@@ -71,7 +71,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.pushplatform:sdk-android:1.0.0")
+    implementation("com.pushplatform:sdk-android:1.2.5")
 }
 ```
 
@@ -83,10 +83,10 @@ SDK для push-уведомлений в браузерах.
 
 | Платформа | Версия и установка | Репозиторий |
 | :--- | :--- | :--- |
-| **Web · JavaScript / TypeScript** | **0.1.1** · [npm](https://www.npmjs.com/package/@pushplatform/web-sdk) | [pushpilot-sdk-web](https://github.com/pushplatform/pushpilot-sdk-web) |
+| **Web · JavaScript / TypeScript** | **0.3.5** · [npm](https://www.npmjs.com/package/@pushplatform/web-sdk) | [pushpilot-sdk-web](https://github.com/pushplatform/pushpilot-sdk-web) |
 
 ```sh
-npm install @pushplatform/web-sdk@0.1.1
+npm install @pushplatform/web-sdk@0.3.5
 ```
 
 Разместите service worker на своём сайте. Для проекта с директорией `public`:
@@ -104,13 +104,13 @@ cp node_modules/@pushplatform/web-sdk/dist/service-worker.js public/pushpilot-sw
 
 | Платформа | Версия и установка | Репозиторий |
 | :--- | :--- | :--- |
-| **React Native / Expo · JavaScript / TypeScript** | **1.0.1** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
-| **Flutter · Dart** | **1.0.0** · [pub.dev](https://pub.dev/packages/push_platform_flutter) | [pushpilot-sdk-flutter](https://github.com/pushplatform/pushpilot-sdk-flutter) |
+| **React Native / Expo · JavaScript / TypeScript** | **1.3.5** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
+| **Flutter · Dart** | **1.2.7** · [pub.dev](https://pub.dev/packages/push_platform_flutter) | [pushpilot-sdk-flutter](https://github.com/pushplatform/pushpilot-sdk-flutter) |
 
 ### React Native и Expo
 
 ```sh
-npm install @pushplatform/react-native@1.0.1
+npm install @pushplatform/react-native@1.3.5
 ```
 
 Для **Expo** дополнительно установите development client:
@@ -126,10 +126,10 @@ npx expo install expo-dev-client
 ### Flutter
 
 ```sh
-flutter pub add push_platform_flutter:^1.0.0
+flutter pub add push_platform_flutter:^1.2.7
 ```
 
-Пакет опубликован на [pub.dev](https://pub.dev/packages/push_platform_flutter) и подключает Android и iOS SDK **1.0.0**. Требуются **Flutter 3.24+ / Dart 3.5+**, **Android API 21+** или **iOS 13+**. Настройка Firebase, APNs и CocoaPods — в [README Flutter SDK](https://github.com/pushplatform/pushpilot-sdk-flutter#readme). Flutter Web и desktop не поддерживаются.
+Пакет опубликован на [pub.dev](https://pub.dev/packages/push_platform_flutter) и подключает Android SDK **1.2.5** и CocoaPod `PushPlatformSDK` **1.2.6**. Требуются **Flutter 3.24+ / Dart 3.5+**, **Android API 21+** или **iOS 13+**. Настройка Firebase, APNs и CocoaPods — в [README Flutter SDK](https://github.com/pushplatform/pushpilot-sdk-flutter#readme). Flutter Web и desktop не поддерживаются.
 
 <a name="quickstart"></a>
 
