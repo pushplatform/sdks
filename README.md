@@ -146,13 +146,13 @@ cp node_modules/@pushplatform/web-sdk/dist/service-worker.js public/pushpilot-sw
 
 | Платформа | Версия и установка | Репозиторий |
 | :--- | :--- | :--- |
-| **React Native / Expo · JavaScript / TypeScript** | **1.3.8** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
+| **React Native / Expo · JavaScript / TypeScript** | **1.3.10** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
 | **Flutter · Dart** | **1.2.10** · [pub.dev](https://pub.dev/packages/push_platform_flutter) | [pushpilot-sdk-flutter](https://github.com/pushplatform/pushpilot-sdk-flutter) |
 
 ### React Native и Expo
 
 ```sh
-npm install @pushplatform/react-native@1.3.8
+npm install @pushplatform/react-native@1.3.10
 ```
 
 Для **Expo** дополнительно установите development client:
