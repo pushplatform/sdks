@@ -21,12 +21,12 @@ SDK для нативных приложений iOS и Android.
 
 | Платформа | Версия и установка | Репозиторий |
 | :--- | :--- | :--- |
-| **iOS · Swift** | **1.2.7** через SPM, **1.2.6** через [CocoaPods](https://cocoapods.org/pods/PushPlatformSDK) | [pushpilot-sdk-ios](https://github.com/pushplatform/pushpilot-sdk-ios) |
+| **iOS · Swift** | **1.2.8** · SPM или [CocoaPods](https://cocoapods.org/pods/PushPlatformSDK) | [pushpilot-sdk-ios](https://github.com/pushplatform/pushpilot-sdk-ios) |
 | **Android · Kotlin** | **1.2.5** · [публичный Maven-репозиторий GitHub](https://github.com/pushplatform/pushpilot-sdk-android/tree/maven) | [pushpilot-sdk-android](https://github.com/pushplatform/pushpilot-sdk-android) |
 
 ### iOS — Swift Package Manager или CocoaPods
 
-**SPM:** в Xcode откройте **File → Add Package Dependencies**, укажите URL и выберите версию **1.2.7**. Добавьте продукт **PushPlatformSDK** в target приложения. Пакет также есть в [Swift Package Index](https://swiftpackageindex.com/pushplatform/pushpilot-sdk-ios).
+**SPM:** в Xcode откройте **File → Add Package Dependencies**, укажите URL и выберите версию **1.2.8**. Добавьте продукт **PushPlatformSDK** в target приложения. Пакет также есть в [Swift Package Index](https://swiftpackageindex.com/pushplatform/pushpilot-sdk-ios).
 
 ```text
 https://github.com/pushplatform/pushpilot-sdk-ios.git
@@ -35,63 +35,59 @@ https://github.com/pushplatform/pushpilot-sdk-ios.git
 Для проекта с `Package.swift` добавьте в `dependencies`:
 
 ```swift
-.package(url: "https://github.com/pushplatform/pushpilot-sdk-ios.git", from: "1.2.7")
+.package(url: "https://github.com/pushplatform/pushpilot-sdk-ios.git", from: "1.2.8")
 ```
 
 **CocoaPods:** добавьте в target приложения в `Podfile`:
 
 ```ruby
-pod 'PushPlatformSDK', '1.2.6'
+pod 'PushPlatformSDK', '1.2.8'
 ```
 
 ```sh
 pod install
 ```
 
-Откройте `.xcworkspace`. Используйте один способ подключения SDK в target. CocoaPods Trunk до 6 ноября 2026, 12:00 ET, принимает **1.2.6**. Версия **1.2.7** уже ставится через Swift Package Manager. Требуется **iOS 13+**; настройка APNs, capabilities и callbacks описана в [README iOS SDK](https://github.com/pushplatform/pushpilot-sdk-ios#readme).
+Откройте `.xcworkspace`. Используйте один способ подключения SDK в target. Требуется **iOS 13+**; настройка APNs, capabilities и callbacks описана в [README iOS SDK](https://github.com/pushplatform/pushpilot-sdk-ios#readme).
 
-Чтобы `received` ушёл при закрытом приложении, добавьте Notification Service Extension. Баннер без него показывается. Файл для копирования: [Sources/PushPlatformNotificationService/NotificationService.swift](https://github.com/pushplatform/pushpilot-sdk-ios/blob/v1.2.7/Sources/PushPlatformNotificationService/NotificationService.swift).
+Чтобы `received` ушёл при закрытом приложении, добавьте Notification Service Extension и target в Podfile. Баннер без него показывается. Код только вызывает `PushPlatformExtension` из пода. Образец: [NotificationService.swift](https://github.com/pushplatform/pushpilot-sdk-ios/blob/v1.2.8/Sources/PushPlatformNotificationService/NotificationService.swift).
 
 1. **File → New → Target → Notification Service Extension**. **Don't Activate**. Deployment Target как у приложения, не ниже iOS 13.
 2. Bundle ID extension — bundle ID приложения плюс `.PushPlatformNotificationService`.
 3. **App Groups** на обоих target: `group.<bundle id приложения>.pushplatform`.
-4. Замените `NotificationService.swift` файлом по ссылке выше. React Native, Expo и Flutter этот target не создают.
+4. Добавьте target и замените `NotificationService.swift` кодом ниже. React Native, Expo и Flutter target не создают.
+
+```ruby
+target 'PushPlatformNotificationServiceExtension' do
+  pod 'PushPlatformSDK', '1.2.8'
+end
+```
 
 ```swift
 import UserNotifications
+import PushPlatformSDK
 
 class NotificationService: UNNotificationServiceExtension {
+    var contentHandler: ((UNNotificationContent) -> Void)?
+    var receivedRequest: UNNotificationRequest!
+    var bestAttemptContent: UNMutableNotificationContent?
+
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
-        guard let content = request.content.mutableCopy() as? UNMutableNotificationContent else {
+        self.receivedRequest = request
+        self.contentHandler = contentHandler
+        bestAttemptContent = request.content.mutableCopy() as? UNMutableNotificationContent
+        if let bestAttemptContent {
+            PushPlatformExtension.didReceive(receivedRequest, with: bestAttemptContent, withContentHandler: contentHandler)
+        } else {
             contentHandler(request.content)
-            return
         }
-        let userInfo = request.content.userInfo
-        let notificationID = userInfo["notification_id"] as? String
-        let bundleID = (Bundle.main.bundleIdentifier ?? "").replacingOccurrences(of: ".PushPlatformNotificationService", with: "")
-        let defaults = UserDefaults(suiteName: "group.\(bundleID).pushplatform")
-        let serverURL = defaults?.string(forKey: "server_url")
-        let applicationID = defaults?.string(forKey: "application_id")
-        let subscriptionID = defaults?.string(forKey: "subscription_id")
-        guard let notificationID, !notificationID.isEmpty,
-              let serverURL, let applicationID, let subscriptionID, !subscriptionID.isEmpty,
-              let encoded = notificationID.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
-              let url = URL(string: "\(serverURL)/notifications/\(encoded)") else {
-            contentHandler(content)
-            return
+    }
+
+    override func serviceExtensionTimeWillExpire() {
+        if let contentHandler, let bestAttemptContent,
+           PushPlatformExtension.serviceExtensionTimeWillExpireRequest(receivedRequest, with: bestAttemptContent) {
+            contentHandler(bestAttemptContent)
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: [
-            "app_id": applicationID,
-            "subscription_id": subscriptionID,
-            "received": true,
-        ])
-        let task = URLSession.shared.dataTask(with: request) { _, _, _ in
-            contentHandler(content)
-        }
-        task.resume()
     }
 }
 ```
@@ -150,13 +146,13 @@ cp node_modules/@pushplatform/web-sdk/dist/service-worker.js public/pushpilot-sw
 
 | Платформа | Версия и установка | Репозиторий |
 | :--- | :--- | :--- |
-| **React Native / Expo · JavaScript / TypeScript** | **1.3.6** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
-| **Flutter · Dart** | **1.2.8** · [pub.dev](https://pub.dev/packages/push_platform_flutter) | [pushpilot-sdk-flutter](https://github.com/pushplatform/pushpilot-sdk-flutter) |
+| **React Native / Expo · JavaScript / TypeScript** | **1.3.7** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
+| **Flutter · Dart** | **1.2.9** · [pub.dev](https://pub.dev/packages/push_platform_flutter) | [pushpilot-sdk-flutter](https://github.com/pushplatform/pushpilot-sdk-flutter) |
 
 ### React Native и Expo
 
 ```sh
-npm install @pushplatform/react-native@1.3.6
+npm install @pushplatform/react-native@1.3.7
 ```
 
 Для **Expo** дополнительно установите development client:
@@ -172,10 +168,10 @@ npx expo install expo-dev-client
 ### Flutter
 
 ```sh
-flutter pub add push_platform_flutter:^1.2.8
+flutter pub add push_platform_flutter:^1.2.9
 ```
 
-Пакет опубликован на [pub.dev](https://pub.dev/packages/push_platform_flutter) и подключает Android SDK **1.2.5** и CocoaPod `PushPlatformSDK` **1.2.6**. Требуются **Flutter 3.24+ / Dart 3.5+**, **Android API 21+** или **iOS 13+**. Настройка Firebase, APNs и CocoaPods — в [README Flutter SDK](https://github.com/pushplatform/pushpilot-sdk-flutter#readme). Flutter Web и desktop не поддерживаются.
+Пакет опубликован на [pub.dev](https://pub.dev/packages/push_platform_flutter) и подключает Android SDK **1.2.5** и CocoaPod `PushPlatformSDK` **1.2.8**. Требуются **Flutter 3.24+ / Dart 3.5+**, **Android API 21+** или **iOS 13+**. Настройка Firebase, APNs и CocoaPods — в [README Flutter SDK](https://github.com/pushplatform/pushpilot-sdk-flutter#readme). Flutter Web и desktop не поддерживаются.
 
 <a name="quickstart"></a>
 
