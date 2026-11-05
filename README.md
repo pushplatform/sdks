@@ -56,7 +56,7 @@ pod install
 1. **File → New → Target → Notification Service Extension**. **Don't Activate**. Deployment Target как у приложения, не ниже iOS 13.
 2. Bundle ID extension — bundle ID приложения плюс `.PushPlatformNotificationService`.
 3. **App Groups** на обоих target: `group.<bundle id приложения>.pushplatform`.
-4. Добавьте target и замените `NotificationService.swift` кодом ниже. React Native, Expo и Flutter target не создают.
+4. Добавьте target и замените `NotificationService.swift` кодом ниже. В extension — `import PushPlatformExtension`, не `import PushPlatformSDK` (иначе `No such module 'PushPlatformSDK'`). React Native, Expo и Flutter target не создают.
 
 ```ruby
 target 'PushPlatformNotificationServiceExtension' do
