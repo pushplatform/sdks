@@ -21,12 +21,12 @@ SDK для нативных приложений iOS и Android.
 
 | Платформа | Версия и установка | Репозиторий |
 | :--- | :--- | :--- |
-| **iOS · Swift** | **1.2.9** · SPM или [CocoaPods](https://cocoapods.org/pods/PushPlatformSDK) | [pushpilot-sdk-ios](https://github.com/pushplatform/pushpilot-sdk-ios) |
+| **iOS · Swift** | **1.2.10** · SPM или [CocoaPods](https://cocoapods.org/pods/PushPlatformSDK) | [pushpilot-sdk-ios](https://github.com/pushplatform/pushpilot-sdk-ios) |
 | **Android · Kotlin** | **1.2.5** · [публичный Maven-репозиторий GitHub](https://github.com/pushplatform/pushpilot-sdk-android/tree/maven) | [pushpilot-sdk-android](https://github.com/pushplatform/pushpilot-sdk-android) |
 
 ### iOS — Swift Package Manager или CocoaPods
 
-**SPM:** в Xcode откройте **File → Add Package Dependencies**, укажите URL и выберите версию **1.2.9**. Добавьте продукт **PushPlatformSDK** в target приложения. Пакет также есть в [Swift Package Index](https://swiftpackageindex.com/pushplatform/pushpilot-sdk-ios).
+**SPM:** в Xcode откройте **File → Add Package Dependencies**, укажите URL и выберите версию **1.2.10**. Добавьте продукт **PushPlatformSDK** в target приложения. Пакет также есть в [Swift Package Index](https://swiftpackageindex.com/pushplatform/pushpilot-sdk-ios).
 
 ```text
 https://github.com/pushplatform/pushpilot-sdk-ios.git
@@ -35,13 +35,14 @@ https://github.com/pushplatform/pushpilot-sdk-ios.git
 Для проекта с `Package.swift` добавьте в `dependencies`:
 
 ```swift
-.package(url: "https://github.com/pushplatform/pushpilot-sdk-ios.git", from: "1.2.9")
+.package(url: "https://github.com/pushplatform/pushpilot-sdk-ios.git", from: "1.2.10")
 ```
 
-**CocoaPods:** пока Trunk read-only и не отдаёт 1.2.9, pin с публичного git-тега (SPM уже на 1.2.9):
+**CocoaPods:** пока Trunk read-only и не отдаёт 1.2.10, pin с публичного git-тега (SPM уже на 1.2.10):
 
 ```ruby
-pod 'PushPlatformSDK', :git => 'https://github.com/pushplatform/pushpilot-sdk-ios.git', :tag => 'v1.2.9'
+pod 'PushPlatformExtension', :git => 'https://github.com/pushplatform/pushpilot-sdk-ios.git', :tag => 'v1.2.10'
+pod 'PushPlatformSDK', :git => 'https://github.com/pushplatform/pushpilot-sdk-ios.git', :tag => 'v1.2.10'
 ```
 
 ```sh
@@ -50,7 +51,7 @@ pod install
 
 Откройте `.xcworkspace`. Используйте один способ подключения SDK в target. Требуется **iOS 13+**; настройка APNs, capabilities и callbacks описана в [README iOS SDK](https://github.com/pushplatform/pushpilot-sdk-ios#readme).
 
-Чтобы `received` ушёл при закрытом приложении, добавьте Notification Service Extension и git-pin `v1.2.9` в Podfile. Баннер без него показывается. Код только вызывает `PushPlatformExtension` из пода. Образец: [NotificationService.swift](https://github.com/pushplatform/pushpilot-sdk-ios/blob/v1.2.9/Sources/PushPlatformNotificationService/NotificationService.swift).
+Чтобы `received` ушёл при закрытом приложении, добавьте Notification Service Extension и git-pin `v1.2.10` в Podfile. Баннер без него показывается. Код только вызывает `PushPlatformExtension` из пода. Образец: [NotificationService.swift](https://github.com/pushplatform/pushpilot-sdk-ios/blob/v1.2.10/Sources/PushPlatformNotificationService/NotificationService.swift).
 
 1. **File → New → Target → Notification Service Extension**. **Don't Activate**. Deployment Target как у приложения, не ниже iOS 13.
 2. Bundle ID extension — bundle ID приложения плюс `.PushPlatformNotificationService`.
@@ -59,7 +60,7 @@ pod install
 
 ```ruby
 target 'PushPlatformNotificationServiceExtension' do
-  pod 'PushPlatformSDK/Extension', :git => 'https://github.com/pushplatform/pushpilot-sdk-ios.git', :tag => 'v1.2.9'
+  pod 'PushPlatformExtension', :git => 'https://github.com/pushplatform/pushpilot-sdk-ios.git', :tag => 'v1.2.10'
 end
 ```
 
@@ -146,13 +147,13 @@ cp node_modules/@pushplatform/web-sdk/dist/service-worker.js public/pushpilot-sw
 
 | Платформа | Версия и установка | Репозиторий |
 | :--- | :--- | :--- |
-| **React Native / Expo · JavaScript / TypeScript** | **1.3.10** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
-| **Flutter · Dart** | **1.2.10** · [pub.dev](https://pub.dev/packages/push_platform_flutter) | [pushpilot-sdk-flutter](https://github.com/pushplatform/pushpilot-sdk-flutter) |
+| **React Native / Expo · JavaScript / TypeScript** | **1.3.11** · [npm](https://www.npmjs.com/package/@pushplatform/react-native) | [pushpilot-sdk-react-native](https://github.com/pushplatform/pushpilot-sdk-react-native) |
+| **Flutter · Dart** | **1.2.11** · [pub.dev](https://pub.dev/packages/push_platform_flutter) | [pushpilot-sdk-flutter](https://github.com/pushplatform/pushpilot-sdk-flutter) |
 
 ### React Native и Expo
 
 ```sh
-npm install @pushplatform/react-native@1.3.10
+npm install @pushplatform/react-native@1.3.11
 ```
 
 Для **Expo** дополнительно установите development client:
@@ -168,10 +169,10 @@ npx expo install expo-dev-client
 ### Flutter
 
 ```sh
-flutter pub add push_platform_flutter:^1.2.10
+flutter pub add push_platform_flutter:^1.2.11
 ```
 
-Пакет опубликован на [pub.dev](https://pub.dev/packages/push_platform_flutter) и подключает Android SDK **1.2.5** и `PushPlatformSDK` **1.2.9** (git-тег `v1.2.9`, пока Trunk read-only). Требуются **Flutter 3.24+ / Dart 3.5+**, **Android API 21+** или **iOS 13+**. Настройка Firebase, APNs и CocoaPods — в [README Flutter SDK](https://github.com/pushplatform/pushpilot-sdk-flutter#readme). Flutter Web и desktop не поддерживаются.
+Пакет опубликован на [pub.dev](https://pub.dev/packages/push_platform_flutter) и подключает Android SDK **1.2.5** и `PushPlatformSDK` **1.2.10** (git-тег `v1.2.10`, пока Trunk read-only). Требуются **Flutter 3.24+ / Dart 3.5+**, **Android API 21+** или **iOS 13+**. Настройка Firebase, APNs и CocoaPods — в [README Flutter SDK](https://github.com/pushplatform/pushpilot-sdk-flutter#readme). Flutter Web и desktop не поддерживаются.
 
 <a name="quickstart"></a>
 
